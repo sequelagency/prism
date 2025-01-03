@@ -52,6 +52,9 @@ trait BuildsTextRequests
     /** @var array<string, array<string, mixed>> */
     protected $providerMeta = [];
 
+    // Add a stream property
+    protected bool $stream = false;
+
     public function using(string|Provider $provider, string $model): self
     {
         $this->provider = is_string($provider) ? $provider : $provider->value;
@@ -180,6 +183,12 @@ trait BuildsTextRequests
         return $this;
     }
 
+    public function withStream(bool $enabled = true): self
+    {
+        $this->stream = $enabled;
+        return $this;
+    }
+
     protected function textRequest(): Request
     {
         return new Request(
@@ -187,14 +196,15 @@ trait BuildsTextRequests
             systemPrompt: $this->systemPrompt,
             prompt: $this->prompt,
             messages: $this->messages,
-            temperature: $this->temperature,
             maxTokens: $this->maxTokens,
+            temperature: $this->temperature,
             topP: $this->topP,
             tools: $this->tools,
             clientOptions: $this->clientOptions,
             clientRetry: $this->clientRetry,
             toolChoice: $this->toolChoice,
             providerMeta: $this->providerMeta,
+            stream: $this->stream
         );
     }
 

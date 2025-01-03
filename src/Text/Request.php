@@ -31,5 +31,6 @@ class Request
         public readonly array $clientRetry,
         public readonly string|ToolChoice|null $toolChoice,
         public readonly array $providerMeta,
+        public readonly bool $stream = false,
     ) {}
 }

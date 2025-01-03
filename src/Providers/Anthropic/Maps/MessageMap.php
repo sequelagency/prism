@@ -25,7 +25,7 @@ class MessageMap
     {
         return array_values(array_map(
             fn (Message $message): array => self::mapMessage($message),
-            array_filter($messages, fn (Message $message): bool => !$message instanceof SystemMessage)
+            array_filter($messages, fn (Message $message): bool => ! $message instanceof SystemMessage)
         ));
     }
 
