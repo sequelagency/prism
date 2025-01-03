@@ -69,6 +69,9 @@ class Text
         $body = $response->toPsrResponse()->getBody();
         $finalText = '';
 
+        $promptTokens = 0;
+        $completeTokens = 0;
+
         $providerKey = array_key_first($request->providerMeta);
         $conversationId = $request->providerMeta[$providerKey]['conversation_id'] ?? null;
 
@@ -108,7 +111,7 @@ class Text
         return new \EchoLabs\Prism\Providers\ProviderResponse(
             text: $finalText,
             toolCalls: [],
-            usage: new \EchoLabs\Prism\ValueObjects\Usage(0, 0),
+            usage: new \EchoLabs\Prism\ValueObjects\Usage($promptTokens, $completeTokens),
             finishReason: $finishReason,
             response: []
         );

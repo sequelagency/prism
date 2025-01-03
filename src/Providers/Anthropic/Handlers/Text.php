@@ -75,6 +75,9 @@ class Text
         $providerKey = array_key_first($request->providerMeta);
         $conversationId = $request->providerMeta[$providerKey]['conversation_id'] ?? null;
 
+        $promptTokens = 0;
+        $completeTokens = 0;
+
         $buffer = '';
         while (!$body->eof()) {
             $chunk = $body->read(8192);
@@ -102,6 +105,15 @@ class Text
                             // Not valid JSON or empty
                             continue;
                         }
+
+                        // Get prompt tokens
+                        if ($decoded['type'] == 'message_start') {
+                            $promptTokens = $decoded['message']['usage']['input_tokens'];
+                        }
+                        if (isset($decoded['usage']['output_tokens'])) {
+                            $completeTokens = $decoded['usage']['output_tokens'];
+                        }
+
 
                         // 1) If type === 'content_block_delta', partial text is in delta.text
                         if (($decoded['type'] ?? null) === 'content_block_delta') {
@@ -141,7 +153,7 @@ class Text
         return new ProviderResponse(
             text: $finalText,
             toolCalls: [],
-            usage: new Usage(0, 0),
+            usage: new Usage($promptTokens, $completeTokens),
             finishReason: $finishReason,
             response: []
         );
